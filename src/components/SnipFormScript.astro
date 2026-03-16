@@ -1,0 +1,22 @@
+---
+/**
+ * Standalone SnipForm CDN script component.
+ *
+ * Use this when `scriptInjection: false` is set in the integration options
+ * to selectively load the SnipForm script only on pages that have forms.
+ *
+ * Place this in your layout or page:
+ * ```astro
+ * <SnipFormScript />
+ * ```
+ */
+interface Props {
+  /** CDN URL override */
+  src?: string;
+}
+
+const { src = 'https://cdn.snipform.io/api/v2/sf.iife.js' } = Astro.props;
+---
+
+{/* @ts-ignore - is:inline is a valid Astro directive */}
+<script is:inline src={src} defer></script>

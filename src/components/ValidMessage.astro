@@ -1,0 +1,34 @@
+---
+import type { ValidStateProps } from '../types/directives.ts';
+import { buildValidAttrs } from '../utils/build-directives.ts';
+
+interface Props extends ValidStateProps {
+  /** HTML element to render (default: 'span') */
+  as?: string;
+  [key: string]: any;
+}
+
+const {
+  field,
+  show,
+  hide,
+  text,
+  class: className,
+  style: styleProp,
+  as: Element = 'span',
+  ...rest
+} = Astro.props;
+
+const validAttrs = buildValidAttrs({
+  field,
+  show,
+  hide,
+  text,
+  class: className,
+  style: styleProp,
+});
+---
+
+<Element {...validAttrs} {...rest}>
+  <slot />
+</Element>

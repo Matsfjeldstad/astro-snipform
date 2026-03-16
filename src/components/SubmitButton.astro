@@ -1,0 +1,29 @@
+---
+import type { SubmitStateProps } from '../types/directives.ts';
+import { buildSubmitAttrs } from '../utils/build-directives.ts';
+
+interface Props extends SubmitStateProps {
+  [key: string]: any;
+}
+
+const {
+  onSubmitShow,
+  onSubmitHide,
+  onSubmitText = 'Submitting...',
+  onSubmitClass,
+  onSubmitStyle,
+  ...rest
+} = Astro.props;
+
+const submitAttrs = buildSubmitAttrs({
+  onSubmitShow,
+  onSubmitHide,
+  onSubmitText,
+  onSubmitClass,
+  onSubmitStyle,
+});
+---
+
+<button type="submit" {...submitAttrs} {...rest}>
+  <slot />
+</button>

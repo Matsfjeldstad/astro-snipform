@@ -1,0 +1,11 @@
+---
+interface Props {
+  [key: string]: any;
+}
+
+const { ...rest } = Astro.props;
+---
+
+<sf-result style="display:none" {...rest}>
+  <slot />
+</sf-result>

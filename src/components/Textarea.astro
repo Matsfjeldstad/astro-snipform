@@ -1,0 +1,19 @@
+---
+import type { ValidateProp } from '../types/validation.ts';
+import type { InputStateProps } from '../types/directives.ts';
+import { buildValidationAttrs, buildInputStateAttrs } from '../utils/build-directives.ts';
+
+interface Props extends InputStateProps {
+  /** Validation rules to apply */
+  validate?: ValidateProp;
+  /** All standard HTML textarea attributes */
+  [key: string]: any;
+}
+
+const { validate, errorClass, errorStyle, validClass, validStyle, ...rest } = Astro.props;
+
+const validationAttrs = buildValidationAttrs(validate);
+const stateAttrs = buildInputStateAttrs({ errorClass, errorStyle, validClass, validStyle });
+---
+
+<textarea {...validationAttrs} {...stateAttrs} {...rest}><slot /></textarea>

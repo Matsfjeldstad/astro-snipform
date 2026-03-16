@@ -1,0 +1,47 @@
+---
+import type { ErrorStateProps } from '../types/directives.ts';
+import { buildErrorAttrs } from '../utils/build-directives.ts';
+
+interface Props extends Omit<ErrorStateProps, 'showText' | 'show'> {
+  /** HTML element to render (default: 'span') */
+  as?: string;
+  /** Set to true to keep the error element visible at all times (skip display:none default) */
+  visible?: boolean;
+  /** Explicitly show element without injecting error text (default behavior is showText) */
+  showOnly?: boolean;
+  [key: string]: any;
+}
+
+const {
+  field,
+  hide,
+  text,
+  class: className,
+  style: styleProp,
+  as: Element = 'span',
+  visible = false,
+  showOnly = false,
+  ...rest
+} = Astro.props;
+
+// Smart defaults: showText is the 90% case, auto-hide when no error
+const errorAttrs = buildErrorAttrs({
+  field,
+  show: showOnly ? true : false,
+  showText: showOnly ? false : true,
+  hide: false,
+  text,
+  class: className,
+  style: styleProp,
+});
+
+// Auto-add else-hide so the element hides when error clears
+const elseHide = !visible ? { 'else-hide': '' } : {};
+
+// Auto-add display:none so element starts hidden (unless visible prop is set)
+const autoStyle = !visible && !styleProp ? 'display:none' : styleProp;
+---
+
+<Element {...errorAttrs} {...elseHide} style={autoStyle} {...rest}>
+  <slot />
+</Element>

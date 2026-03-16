@@ -1,0 +1,21 @@
+---
+import type { SnipFormProps } from '../types/container.ts';
+
+interface Props extends SnipFormProps {
+  [key: string]: any;
+}
+
+const { key, transition, mode, readability, namespace, shorthand, ...rest } = Astro.props;
+---
+
+<snip-form
+  key={key}
+  transition={transition !== undefined ? String(transition) : undefined}
+  mode={mode || undefined}
+  readability={readability === false ? 'false' : undefined}
+  namespace={namespace === false ? 'false' : undefined}
+  shorthand={shorthand === false ? 'false' : undefined}
+  {...rest}
+>
+  <slot />
+</snip-form>

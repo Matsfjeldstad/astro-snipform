@@ -1,0 +1,72 @@
+---
+/**
+ * Compound field component: renders an input element with validation
+ * and an auto-hidden error message element.
+ *
+ * @example
+ * <Field name="email" type="email" validate={{ required: 'Enter email', email: 'Invalid' }} class="..." />
+ *
+ * @example
+ * <Field name="role" as="select" validate={{ required: 'Pick a role' }} class="...">
+ *   <option value="">Select...</option>
+ *   <option value="a">Option A</option>
+ * </Field>
+ */
+import type { ValidateProp } from '../types/validation.ts';
+import type { InputStateProps } from '../types/directives.ts';
+import { buildValidationAttrs, buildInputStateAttrs } from '../utils/build-directives.ts';
+
+interface Props extends InputStateProps {
+  /** Field name (used for both the input name attr and error field binding) */
+  name: string;
+  /** Validation rules */
+  validate?: ValidateProp;
+  /** Element type: 'input' (default), 'select', 'textarea' */
+  as?: 'input' | 'select' | 'textarea';
+  /** CSS class for the error message span */
+  errorMessageClass?: string;
+  /** Suppress the built-in error element (use standalone <ErrorMessage> instead) */
+  hideError?: boolean;
+  /** All standard HTML input/select/textarea attributes */
+  [key: string]: any;
+}
+
+const {
+  name,
+  validate,
+  as: elementType = 'input',
+  errorClass,
+  errorStyle,
+  validClass,
+  validStyle,
+  errorMessageClass,
+  hideError = false,
+  ...rest
+} = Astro.props;
+
+const validationAttrs = buildValidationAttrs(validate);
+const stateAttrs = buildInputStateAttrs({ errorClass, errorStyle, validClass, validStyle });
+const errorDirectives = {
+  'if-error': name,
+  'then-show-text': '',
+  'else-hide': '',
+};
+
+const Element = elementType;
+---
+
+{Element === 'input' ? (
+  <input name={name} {...validationAttrs} {...stateAttrs} {...rest} />
+) : Element === 'textarea' ? (
+  <textarea name={name} {...validationAttrs} {...stateAttrs} {...rest}><slot /></textarea>
+) : (
+  <select name={name} {...validationAttrs} {...stateAttrs} {...rest}><slot /></select>
+)}
+
+{!hideError && validate && (
+  <span
+    {...errorDirectives}
+    class={errorMessageClass}
+    style="display:none"
+  ></span>
+)}
