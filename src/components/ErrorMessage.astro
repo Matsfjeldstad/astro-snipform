@@ -18,11 +18,13 @@ const {
   text,
   class: className,
   style: styleProp,
-  as: Element = 'span',
+  as: tag = 'span',
   visible = false,
   showOnly = false,
   ...rest
 } = Astro.props;
+
+const Element = tag as any;
 
 // Smart defaults: showText is the 90% case, auto-hide when no error
 const errorAttrs = buildErrorAttrs({
