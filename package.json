@@ -11,6 +11,9 @@
     "validation"
   ],
   "license": "MIT",
+  "workspaces": [
+    "docs"
+  ],
   "files": [
     "dist",
     "src/components",
@@ -35,7 +38,10 @@
   "scripts": {
     "build": "vp pack",
     "dev": "vp pack --watch",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "docs:dev": "npm run dev --workspace=docs",
+    "docs:build": "npm run build --workspace=docs",
+    "docs:preview": "npm run preview --workspace=docs"
   },
   "devDependencies": {
     "astro": "^6.0.0",
