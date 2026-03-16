@@ -1,5 +1,8 @@
 # astro-snipform
 
+![astro-snipform](public/astro-snipform.jpg)
+
+
 Typesafe Astro integration and components for [SnipForm](https://snipform.io) — directive-driven form backend for static sites.
 
 ## Installation
@@ -26,10 +29,12 @@ This automatically injects the SnipForm CDN script on all pages.
 
 ### Integration Options
 
+
 | Option            | Type      | Default               | Description                                                                  |
 | ----------------- | --------- | --------------------- | ---------------------------------------------------------------------------- |
 | `cdnUrl`          | `string`  | Official SnipForm CDN | Override the CDN URL                                                         |
 | `scriptInjection` | `boolean` | `true`                | Set to `false` to disable auto-injection and use `<SnipFormScript>` per-page |
+
 
 ```ts
 snipform({
@@ -51,14 +56,16 @@ import { SnipForm, Field, Input, Textarea, Select, ErrorMessage, ValidMessage, S
 
 Form container. Wraps your form fields and connects to the SnipForm backend.
 
+
 | Prop          | Type                | Description                                        |
 | ------------- | ------------------- | -------------------------------------------------- |
 | `key`         | `string` (required) | Your form's unique key from the SnipForm dashboard |
-| `transition`  | `number \| 'none'`  | Fade transition duration in ms (default: 150)      |
+| `transition`  | `number | 'none'`   | Fade transition duration in ms (default: 150)      |
 | `mode`        | `'test'`            | Enable test mode — form won't actually submit      |
 | `readability` | `false`             | Disable the readability directive parser           |
 | `namespace`   | `false`             | Disable the namespace directive parser             |
 | `shorthand`   | `false`             | Disable the shorthand directive parser             |
+
 
 ```astro
 <SnipForm key="your-form-key">
@@ -70,17 +77,19 @@ Form container. Wraps your form fields and connects to the SnipForm backend.
 
 Compound component that renders an input element with validation and an auto-hidden error message.
 
-| Prop                | Type                                | Description                                                       |
-| ------------------- | ----------------------------------- | ----------------------------------------------------------------- |
-| `name`              | `string` (required)                 | Field name (used for input name attr and error binding)           |
-| `validate`          | `ValidateProp`                      | Validation rules (see [Validation](#validation))                  |
-| `as`                | `'input' \| 'select' \| 'textarea'` | Element type (default: `'input'`)                                 |
-| `errorMessageClass` | `string`                            | CSS class for the auto-generated error message span               |
-| `hideError`         | `boolean`                           | Suppress built-in error element (use standalone `<ErrorMessage>`) |
-| `errorClass`        | `string`                            | CSS class added to the input on error                             |
-| `errorStyle`        | `string`                            | Inline style added to the input on error                          |
-| `validClass`        | `string`                            | CSS class added to the input when valid                           |
-| `validStyle`        | `string`                            | Inline style added to the input when valid                        |
+
+| Prop                | Type                              | Description                                                       |
+| ------------------- | --------------------------------- | ----------------------------------------------------------------- |
+| `name`              | `string` (required)               | Field name (used for input name attr and error binding)           |
+| `validate`          | `ValidateProp`                    | Validation rules (see [Validation](#validation))                  |
+| `as`                | `'input' | 'select' | 'textarea'` | Element type (default: `'input'`)                                 |
+| `errorMessageClass` | `string`                          | CSS class for the auto-generated error message span               |
+| `hideError`         | `boolean`                         | Suppress built-in error element (use standalone `<ErrorMessage>`) |
+| `errorClass`        | `string`                          | CSS class added to the input on error                             |
+| `errorStyle`        | `string`                          | Inline style added to the input on error                          |
+| `validClass`        | `string`                          | CSS class added to the input when valid                           |
+| `validStyle`        | `string`                          | Inline style added to the input when valid                        |
+
 
 ```astro
 <Field
@@ -102,6 +111,7 @@ Compound component that renders an input element with validation and an auto-hid
 
 Standalone input element with validation and state styling (no built-in error message).
 
+
 | Prop         | Type           | Description                   |
 | ------------ | -------------- | ----------------------------- |
 | `validate`   | `ValidateProp` | Validation rules              |
@@ -109,6 +119,7 @@ Standalone input element with validation and state styling (no built-in error me
 | `errorStyle` | `string`       | Inline style added on error   |
 | `validClass` | `string`       | CSS class added when valid    |
 | `validStyle` | `string`       | Inline style added when valid |
+
 
 Also accepts all standard HTML `<input>` attributes.
 
@@ -139,6 +150,7 @@ Same props as `<Input>`, renders a `<select>`.
 
 Displays a validation error message for a specific field. Hidden by default, shown when the field has an error.
 
+
 | Prop       | Type      | Default    | Description                                             |
 | ---------- | --------- | ---------- | ------------------------------------------------------- |
 | `field`    | `string`  | (required) | The field name to watch                                 |
@@ -149,6 +161,7 @@ Displays a validation error message for a specific field. Hidden by default, sho
 | `class`    | `string`  |            | CSS class added on error                                |
 | `style`    | `string`  |            | Inline style added on error                             |
 
+
 ```astro
 <ErrorMessage field="email" class="text-red-500 text-sm" />
 ```
@@ -156,6 +169,7 @@ Displays a validation error message for a specific field. Hidden by default, sho
 ### `<ValidMessage>`
 
 Displays content when a field passes validation.
+
 
 | Prop    | Type      | Default    | Description                      |
 | ------- | --------- | ---------- | -------------------------------- |
@@ -167,6 +181,7 @@ Displays content when a field passes validation.
 | `class` | `string`  |            | CSS class added when valid       |
 | `style` | `string`  |            | Inline style added when valid    |
 
+
 ```astro
 <ValidMessage field="email" class="text-green-500 text-sm">Looks good!</ValidMessage>
 ```
@@ -175,6 +190,7 @@ Displays content when a field passes validation.
 
 Submit button with loading/submission state directives.
 
+
 | Prop            | Type      | Description                         |
 | --------------- | --------- | ----------------------------------- |
 | `onSubmitShow`  | `boolean` | Show this element during submission |
@@ -182,6 +198,7 @@ Submit button with loading/submission state directives.
 | `onSubmitText`  | `string`  | Set text during submission          |
 | `onSubmitClass` | `string`  | Add CSS class during submission     |
 | `onSubmitStyle` | `string`  | Add inline style during submission  |
+
 
 ```astro
 <SubmitButton onSubmitText="Sending..." onSubmitClass="opacity-50 cursor-wait">
@@ -203,9 +220,11 @@ Content shown after a successful form submission. Hidden by default.
 
 Standalone script tag for the SnipForm CDN. Use when `scriptInjection: false` is set in the integration options.
 
+
 | Prop  | Type     | Default               | Description      |
 | ----- | -------- | --------------------- | ---------------- |
 | `src` | `string` | Official SnipForm CDN | CDN URL override |
+
 
 ```astro
 <SnipFormScript />
