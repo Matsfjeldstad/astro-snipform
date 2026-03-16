@@ -1,4 +1,4 @@
-# astro-snipform
+# Astro Snipform
 
 ![astro-snipform](https://raw.githubusercontent.com/Matsfjeldstad/astro-snipform/master/public/astro-snipform.jpg)
 
