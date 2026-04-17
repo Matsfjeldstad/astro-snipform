@@ -1,0 +1,7 @@
+/*
+ * Import Tailwind's theme tokens and utility classes only.
+ * Preflight (CSS reset) is intentionally excluded to avoid
+ * conflicting with Starlight's own base styles.
+ */
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);

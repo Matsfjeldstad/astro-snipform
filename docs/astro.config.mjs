@@ -1,9 +1,14 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  vite: {
+    plugins: [tailwindcss()],
+  },
   integrations: [
     starlight({
+      customCss: ["./src/styles/custom.css"],
       title: "astro-snipform",
       description:
         "Typesafe Astro integration and components for SnipForm — directive-driven form backend for static sites.",
