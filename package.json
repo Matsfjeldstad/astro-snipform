@@ -1,6 +1,6 @@
 {
   "name": "astro-snipform",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Typesafe Astro integration and components for SnipForm — directive-driven form backend for static sites",
   "keywords": [
     "astro",
