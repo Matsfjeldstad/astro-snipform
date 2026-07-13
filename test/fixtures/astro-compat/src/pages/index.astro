@@ -1,0 +1,43 @@
+---
+import {
+  ErrorMessage,
+  Field,
+  Input,
+  Select,
+  SnipForm,
+  SnipFormScript,
+  SubmitButton,
+  SuccessContent,
+  Textarea,
+  ValidMessage,
+} from "../../../../../src/components/index.js";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Astro compatibility fixture</title>
+    <SnipFormScript />
+  </head>
+  <body>
+    <SnipForm key="compatibility-test" mode="test">
+      <Field name="name" validate="required" />
+      <Input name="email" type="email" validate={["required", "email"]} />
+      <Textarea name="message" validate={{ required: "Message required" }} value="Hello" />
+      <Select name="topic" validate="required">
+        <option value="">Choose a topic</option>
+        <option value="support">Support</option>
+      </Select>
+      <ErrorMessage field="email" visible>Invalid email</ErrorMessage>
+      <ValidMessage field="email" show>Email valid</ValidMessage>
+      <SubmitButton onSubmitText="Sending">Send</SubmitButton>
+      <SuccessContent>Message sent</SuccessContent>
+    </SnipForm>
+    <SnipForm key="compatibility-test" clientValidate={false}>
+      <Field name="phone" validate="required" />
+      <SubmitButton>Send</SubmitButton>
+    </SnipForm>
+  </body>
+</html>

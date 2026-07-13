@@ -14,14 +14,20 @@ export interface SnipFormProps {
   namespace?: false;
   /** Disable the shorthand directive parser */
   shorthand?: false;
+  /**
+   * Disable client-side validation for this form.
+   *
+   * By default, `sf-validate:*` rules are also checked in the browser
+   * (on blur and before submit) for instant feedback. The server always
+   * re-validates regardless of this setting.
+   */
+  clientValidate?: false;
 }
 
 /**
  * Options for the astro-snipform integration.
  */
 export interface SnipFormIntegrationOptions {
-  /** CDN URL override (default: official SnipForm CDN) */
-  cdnUrl?: string;
   /** Disable automatic script injection on all pages (use `<SnipFormScript>` per-page instead) */
   scriptInjection?: boolean;
 }

@@ -28,10 +28,9 @@ This automatically injects the SnipForm CDN script on all pages.
 
 ### Integration Options
 
-| Option            | Type      | Default               | Description                                                                  |
-| ----------------- | --------- | --------------------- | ---------------------------------------------------------------------------- |
-| `cdnUrl`          | `string`  | Official SnipForm CDN | Override the CDN URL                                                         |
-| `scriptInjection` | `boolean` | `true`                | Set to `false` to disable auto-injection and use `<SnipFormScript>` per-page |
+| Option            | Type      | Default | Description                                                                  |
+| ----------------- | --------- | ------- | ---------------------------------------------------------------------------- |
+| `scriptInjection` | `boolean` | `true`  | Set to `false` to disable auto-injection and use `<SnipFormScript>` per-page |
 
 ```ts
 snipform({
@@ -53,14 +52,15 @@ import { SnipForm, Field, Input, Textarea, Select, ErrorMessage, ValidMessage, S
 
 Form container. Wraps your form fields and connects to the SnipForm backend.
 
-| Prop          | Type                | Description                                        |
-| ------------- | ------------------- | -------------------------------------------------- | --------------------------------------------- |
-| `key`         | `string` (required) | Your form's unique key from the SnipForm dashboard |
-| `transition`  | `number             | 'none'`                                            | Fade transition duration in ms (default: 150) |
-| `mode`        | `'test'`            | Enable test mode — form won't actually submit      |
-| `readability` | `false`             | Disable the readability directive parser           |
-| `namespace`   | `false`             | Disable the namespace directive parser             |
-| `shorthand`   | `false`             | Disable the shorthand directive parser             |
+| Prop             | Type                | Description                                                             |
+| ---------------- | ------------------- | ----------------------------------------------------------------------- |
+| `key`            | `string` (required) | Your form's unique key from the SnipForm dashboard                      |
+| `transition`     | `number \| "none"`  | Fade transition duration in ms (default: 150)                           |
+| `mode`           | `'test'`            | Enable test mode — form won't actually submit                           |
+| `readability`    | `false`             | Disable the readability directive parser                                |
+| `namespace`      | `false`             | Disable the namespace directive parser                                  |
+| `shorthand`      | `false`             | Disable the shorthand directive parser                                  |
+| `clientValidate` | `false`             | Disable [client-side validation](#client-side-validation) for this form |
 
 ```astro
 <SnipForm key="your-form-key">
@@ -72,17 +72,17 @@ Form container. Wraps your form fields and connects to the SnipForm backend.
 
 Compound component that renders an input element with validation and an auto-hidden error message.
 
-| Prop                | Type                | Description                                                       |
-| ------------------- | ------------------- | ----------------------------------------------------------------- | ----------- | --------------------------------- |
-| `name`              | `string` (required) | Field name (used for input name attr and error binding)           |
-| `validate`          | `ValidateProp`      | Validation rules (see [Validation](#validation))                  |
-| `as`                | `'input'            | 'select'                                                          | 'textarea'` | Element type (default: `'input'`) |
-| `errorMessageClass` | `string`            | CSS class for the auto-generated error message span               |
-| `hideError`         | `boolean`           | Suppress built-in error element (use standalone `<ErrorMessage>`) |
-| `errorClass`        | `string`            | CSS class added to the input on error                             |
-| `errorStyle`        | `string`            | Inline style added to the input on error                          |
-| `validClass`        | `string`            | CSS class added to the input when valid                           |
-| `validStyle`        | `string`            | Inline style added to the input when valid                        |
+| Prop                | Type                                | Description                                                       |
+| ------------------- | ----------------------------------- | ----------------------------------------------------------------- |
+| `name`              | `string` (required)                 | Field name (used for input name attr and error binding)           |
+| `validate`          | `ValidateProp`                      | Validation rules (see [Validation](#validation))                  |
+| `as`                | `'input' \| 'select' \| 'textarea'` | Element type (default: `'input'`)                                 |
+| `errorMessageClass` | `string`                            | CSS class for the auto-generated error message span               |
+| `hideError`         | `boolean`                           | Suppress built-in error element (use standalone `<ErrorMessage>`) |
+| `errorClass`        | `string`                            | CSS class added to the input on error                             |
+| `errorStyle`        | `string`                            | Inline style added to the input on error                          |
+| `validClass`        | `string`                            | CSS class added to the input when valid                           |
+| `validStyle`        | `string`                            | Inline style added to the input when valid                        |
 
 ```astro
 <Field
@@ -205,9 +205,7 @@ Content shown after a successful form submission. Hidden by default.
 
 Standalone script tag for the SnipForm CDN. Use when `scriptInjection: false` is set in the integration options.
 
-| Prop  | Type     | Default               | Description      |
-| ----- | -------- | --------------------- | ---------------- |
-| `src` | `string` | Official SnipForm CDN | CDN URL override |
+Always loads the official SnipForm CDN script and accepts no props.
 
 ```astro
 <SnipFormScript />
@@ -236,6 +234,20 @@ The `validate` prop accepts multiple formats:
 **Simple rules:** `required`, `email`, `url`, `active_url`, `boolean`, `accepted`, `numeric`, `integer`, `alpha`, `alpha_num`, `alpha_dash`, `date`, `ip`, `ipv4`, `ipv6`, `uuid`
 
 **Parameterized rules:** `max[n]`, `min[n]`, `between[n,m]`, `min_length[n]`, `max_length[n]`, `starts_with[str]`, `ends_with[str]`, `doesnt_start_with[str]`, `doesnt_end_with[str]`, `in[a,b,c]`, `not_in[a,b,c]`, `after[date]`, `before[date]`, `after_or_equal[date]`, `before_or_equal[date]`, `date_equals[date]`, `same[field]`, `different[field]`, `gt[field]`, `gte[field]`, `lt[field]`, `lte[field]`
+
+### Client-Side Validation
+
+Validation rules are also checked in the browser — on blur and before submit — so users get instant feedback without a network round trip. There is nothing to configure and no second schema to maintain: the same `sf-validate:*` directives the server reads are interpreted client-side, and errors are shown through the same `if-error` / `error-class` elements, so client and server errors look identical.
+
+The server always re-validates on submit; client-side validation is a UX layer, not a security boundary. Rules that can't run in the browser (like `active_url`, which needs a DNS lookup) are skipped and enforced by the server — in dev mode a console warning lists them.
+
+To disable it for a form:
+
+```astro
+<SnipForm key="your-form-key" clientValidate={false}>
+  <!-- validated by the server only -->
+</SnipForm>
+```
 
 ## Full Example
 

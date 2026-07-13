@@ -1,0 +1,442 @@
+---
+/**
+ * Styled demo page for eyeballing client-side validation in the browser.
+ * Run `npx astro dev` in this fixture and open /demo.
+ *
+ * Not part of the build assertions (verify.mjs only checks index.astro output).
+ */
+import {
+  ErrorMessage,
+  Field,
+  Input,
+  SnipForm,
+  SubmitButton,
+  SuccessContent,
+  ValidMessage,
+} from "../../../../../src/components/index.js";
+
+// Pass your own key: PUBLIC_SNIPFORM_KEY=<key> npx astro dev
+const KEY = import.meta.env.PUBLIC_SNIPFORM_KEY ?? "demo-form-key";
+
+const input = {
+  errorClass: "is-error",
+  validClass: "is-valid",
+};
+const err = "msg msg-error";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>snipform · validation lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline src="https://cdn.snipform.io/api/v2/sf.iife.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <p class="kicker">astro-snipform / client validation</p>
+      <h1>Validation lab</h1>
+      <p class="lede">
+        Every rule below is a plain <code>sf-validate:*</code> directive — the same attribute the
+        server reads. Blur a field or hit submit and watch it fail <em>before</em> the network.
+      </p>
+    </header>
+
+    <main class="grid">
+      <!-- 1 · Basics -->
+      <section class="card">
+        <div class="card-head">
+          <span class="index">01</span>
+          <h2>Basics</h2>
+          <p>required · email — blur to validate, type to fix</p>
+        </div>
+        <SnipForm key={KEY} mode="test">
+          <label for="d1-name">Name</label>
+          <Field
+            id="d1-name"
+            name="name"
+            placeholder="Ada Lovelace"
+            validate={{ required: "Your name is required" }}
+            errorMessageClass={err}
+            {...input}
+          />
+          <label for="d1-email">Email</label>
+          <Field
+            id="d1-email"
+            name="email"
+            type="email"
+            placeholder="ada@analytical.engine"
+            validate={{ required: "Email is required", email: "That doesn't look like an email" }}
+            errorMessageClass={err}
+            {...input}
+          />
+          <ValidMessage field="email" show class="msg msg-valid">✓ email looks good</ValidMessage>
+          <SubmitButton onSubmitText="Sending…">Submit</SubmitButton>
+          <SuccessContent>Sent.</SuccessContent>
+        </SnipForm>
+      </section>
+
+      <!-- 2 · Cross-field -->
+      <section class="card">
+        <div class="card-head">
+          <span class="index">02</span>
+          <h2>Cross-field</h2>
+          <p>min_length · same[field] — confirm must match live</p>
+        </div>
+        <SnipForm key={KEY} mode="test">
+          <label for="d2-pass">Password</label>
+          <Input
+            id="d2-pass"
+            name="password"
+            type="password"
+            placeholder="min 8 characters"
+            validate={{
+              required: "Password is required",
+              "min_length[8]": "At least 8 characters",
+            }}
+            {...input}
+          />
+          <ErrorMessage field="password" class="msg msg-error" />
+          <label for="d2-confirm">Confirm password</label>
+          <Input
+            id="d2-confirm"
+            name="password_confirm"
+            type="password"
+            placeholder="same again"
+            validate={{ required: "Please confirm", "same[password]": "Passwords don't match" }}
+            {...input}
+          />
+          <ErrorMessage field="password_confirm" class="msg msg-error" />
+          <ValidMessage field="password_confirm" show class="msg msg-valid">✓ match</ValidMessage>
+          <SubmitButton onSubmitText="Sending…">Submit</SubmitButton>
+          <SuccessContent>Sent.</SuccessContent>
+        </SnipForm>
+      </section>
+
+      <!-- 3 · Numbers & dates -->
+      <section class="card">
+        <div class="card-head">
+          <span class="index">03</span>
+          <h2>Numbers &amp; dates</h2>
+          <p>between[18,99] · after[today] — parameterized rules</p>
+        </div>
+        <SnipForm key={KEY} mode="test">
+          <label for="d3-age">Age</label>
+          <Field
+            id="d3-age"
+            name="age"
+            inputmode="numeric"
+            placeholder="18–99"
+            validate={{ required: "Age is required", "between[18,99]": "Must be between 18 and 99" }}
+            errorMessageClass={err}
+            {...input}
+          />
+          <label for="d3-date">Booking date</label>
+          <Field
+            id="d3-date"
+            name="booking"
+            type="date"
+            validate={{ required: "Pick a date", "after[today]": "Must be a future date" }}
+            errorMessageClass={err}
+            {...input}
+          />
+          <SubmitButton onSubmitText="Sending…">Submit</SubmitButton>
+          <SuccessContent>Sent.</SuccessContent>
+        </SnipForm>
+      </section>
+
+      <!-- 4 · Opt-out -->
+      <section class="card card-muted">
+        <div class="card-head">
+          <span class="index">04</span>
+          <h2>Opt-out <span class="badge">clientValidate={false}</span></h2>
+          <p>Same directives, no client layer — errors come from the server round trip</p>
+        </div>
+        <SnipForm key={KEY} mode="test" clientValidate={false}>
+          <label for="d4-email">Email</label>
+          <Field
+            id="d4-email"
+            name="email"
+            type="email"
+            placeholder="submit empty — nothing happens locally"
+            validate={{ required: "Email is required", email: "Invalid email" }}
+            errorMessageClass={err}
+            {...input}
+          />
+          <SubmitButton onSubmitText="Sending…">Submit</SubmitButton>
+          <SuccessContent>Sent.</SuccessContent>
+        </SnipForm>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        server always re-validates · <code>active_url</code>-style rules defer to server ·
+        <code>mode="test"</code> — nothing is actually submitted
+      </p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #0b0d10;
+    --surface: #12151a;
+    --surface-2: #171b21;
+    --line: #232a33;
+    --text: #e8ecf1;
+    --text-dim: #8b95a3;
+    --accent: #ffd166;
+    --error: #ff5d5d;
+    --valid: #3ddc97;
+    --radius: 14px;
+    --font-body: "Instrument Sans", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 56px 32px 40px;
+    background:
+      radial-gradient(1200px 500px at 70% -10%, rgba(255, 209, 102, 0.07), transparent 60%),
+      radial-gradient(900px 400px at 10% 110%, rgba(61, 220, 151, 0.05), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.5;
+  }
+
+  header {
+    max-width: 1040px;
+    margin: 0 auto 40px;
+  }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 12px;
+  }
+
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin: 0 0 12px;
+  }
+
+  .lede {
+    max-width: 58ch;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  .lede em {
+    color: var(--text);
+    font-style: normal;
+    border-bottom: 1px solid var(--accent);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--accent);
+    background: rgba(255, 209, 102, 0.08);
+    padding: 1px 6px;
+    border-radius: 6px;
+  }
+
+  .grid {
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 760px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .card {
+    background: linear-gradient(180deg, var(--surface-2), var(--surface));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 26px 26px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent 70%);
+    opacity: 0.55;
+  }
+
+  .card-muted::before {
+    background: linear-gradient(90deg, var(--text-dim), transparent 70%);
+    opacity: 0.35;
+  }
+
+  .card-head {
+    margin-bottom: 20px;
+  }
+
+  .index {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  .card-muted .index {
+    color: var(--text-dim);
+  }
+
+  .card h2 {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 6px 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-head p {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--text-dim);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+
+  /* --- form elements (rendered by astro-snipform components) --- */
+
+  snip-form label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin: 16px 0 7px;
+  }
+
+  snip-form input,
+  snip-form select,
+  snip-form textarea {
+    width: 100%;
+    font: 500 15px var(--font-body);
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 11px 14px;
+    outline: none;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  snip-form input::placeholder {
+    color: #55606e;
+  }
+
+  snip-form input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.14);
+  }
+
+  snip-form input.is-error {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(255, 93, 93, 0.14);
+  }
+
+  snip-form input.is-valid {
+    border-color: var(--valid);
+    box-shadow: 0 0 0 3px rgba(61, 220, 151, 0.12);
+  }
+
+  .msg {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    margin-top: 7px;
+  }
+
+  .msg-error {
+    color: var(--error);
+  }
+
+  .msg-valid {
+    color: var(--valid);
+  }
+
+  snip-form button {
+    margin-top: 22px;
+    width: 100%;
+    font: 600 14px var(--font-body);
+    letter-spacing: 0.02em;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    border-radius: 9px;
+    padding: 12px 18px;
+    cursor: pointer;
+    transition:
+      transform 0.12s ease,
+      filter 0.12s ease;
+  }
+
+  snip-form button:hover {
+    filter: brightness(1.08);
+  }
+
+  snip-form button:active {
+    transform: translateY(1px);
+  }
+
+  .card-muted snip-form button {
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--line);
+  }
+
+  footer {
+    max-width: 1040px;
+    margin: 36px auto 0;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  footer p {
+    margin: 0;
+  }
+</style>

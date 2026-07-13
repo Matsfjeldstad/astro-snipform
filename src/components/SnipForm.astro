@@ -5,7 +5,8 @@ interface Props extends SnipFormProps {
   [key: string]: any;
 }
 
-const { key, transition, mode, readability, namespace, shorthand, ...rest } = Astro.props;
+const { key, transition, mode, readability, namespace, shorthand, clientValidate, ...rest } =
+  Astro.props;
 ---
 
 <snip-form
@@ -15,7 +16,13 @@ const { key, transition, mode, readability, namespace, shorthand, ...rest } = As
   readability={readability === false ? 'false' : undefined}
   namespace={namespace === false ? 'false' : undefined}
   shorthand={shorthand === false ? 'false' : undefined}
+  sf-client-validate={clientValidate === false ? 'false' : undefined}
   {...rest}
 >
   <slot />
 </snip-form>
+
+<script>
+  import { initClientValidation } from '../client/runtime.ts';
+  initClientValidation();
+</script>

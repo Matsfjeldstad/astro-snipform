@@ -1,0 +1,10 @@
+{
+  "name": "astro-snipform-compat-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "verify": "node verify.mjs"
+  },
+  "packageManager": "npm@11.11.1"
+}
