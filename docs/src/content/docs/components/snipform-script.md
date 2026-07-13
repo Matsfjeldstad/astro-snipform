@@ -13,11 +13,7 @@ import { SnipFormScript } from 'astro-snipform/components';
 <SnipFormScript />
 ```
 
-## Props
-
-| Prop  | Type     | Default               | Description                                       |
-| ----- | -------- | --------------------- | ------------------------------------------------- |
-| `src` | `string` | Official SnipForm CDN | Override the CDN URL for this specific script tag |
+`<SnipFormScript>` always loads the official SnipForm CDN script and accepts no props.
 
 ## When to Use
 

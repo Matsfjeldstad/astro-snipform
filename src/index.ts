@@ -22,7 +22,6 @@ const SNIPFORM_CDN_URL = "https://cdn.snipform.io/api/v2/sf.iife.js";
  * ```
  */
 export default function snipform(options?: SnipFormIntegrationOptions): AstroIntegration {
-  const cdnUrl = options?.cdnUrl ?? SNIPFORM_CDN_URL;
   const inject = options?.scriptInjection !== false;
 
   return {
@@ -32,7 +31,7 @@ export default function snipform(options?: SnipFormIntegrationOptions): AstroInt
         if (inject) {
           injectScript(
             "head-inline",
-            `var s=document.createElement('script');s.src='${cdnUrl}';s.defer=true;document.head.appendChild(s);`,
+            `var s=document.createElement('script');s.src='${SNIPFORM_CDN_URL}';s.defer=true;document.head.appendChild(s);`,
           );
         }
       },
