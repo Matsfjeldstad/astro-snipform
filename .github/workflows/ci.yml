@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality and Astro 7 docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: "24"
+          cache: true
+
+      - run: vp install --frozen-lockfile
+        env:
+          VITE_GIT_HOOKS: "0"
+      - run: vp check
+      - run: vp test
+      - run: vp pack
+      - run: vp run astro-snipform-docs#build
+
+  astro-compatibility:
+    name: Astro ${{ matrix.astro-major }} / Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - astro-major: 4
+            astro: ^4.0.0
+            node: 20.19.0
+          - astro-major: 5
+            astro: ^5.0.0
+            node: 20.19.0
+          - astro-major: 6
+            astro: ^6.0.0
+            node: 22.12.0
+          - astro-major: 7
+            astro: ^7.0.0
+            node: "24"
+    defaults:
+      run:
+        working-directory: test/fixtures/astro-compat
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: ${{ matrix.node }}
+          cache: false
+
+      - run: vp add -D "astro@${{ matrix.astro }}"
+      - run: vp run build
+      - run: vp run verify

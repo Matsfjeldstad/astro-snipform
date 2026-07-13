@@ -16,4 +16,5 @@ for (const output of [
 }
 
 // The client validation runtime is bundled by Astro as a hoisted module script
-assert.match(html, /<script type="module" src="\/_astro\/SnipForm[^"]+\.js"><\/script>/);
+// (named SnipForm_*.js on Astro 6+, hoisted.*.js on Astro 4/5)
+assert.match(html, /<script type="module" src="\/_astro\/[^"]+\.js"><\/script>/);
