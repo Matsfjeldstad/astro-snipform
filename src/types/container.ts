@@ -25,7 +25,7 @@ export interface SnipFormProps {
 }
 
 /**
- * Options for the astro-snipform integration.
+ * Options for the @snipform/astro-forms integration.
  */
 export interface SnipFormIntegrationOptions {
   /** Disable automatic script injection on all pages (use `<SnipFormScript>` per-page instead) */

@@ -102,7 +102,7 @@ function warnServerOnly(name: string): void {
   if (import.meta.env?.DEV && !isClientRule(name) && !warnedRules.has(name)) {
     warnedRules.add(name);
     console.warn(
-      `[astro-snipform] Rule "${name}" cannot be checked client-side; it will be validated by the server on submit.`,
+      `[astro-forms] Rule "${name}" cannot be checked client-side; it will be validated by the server on submit.`,
     );
   }
 }

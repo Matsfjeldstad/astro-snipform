@@ -14,7 +14,7 @@ const SNIPFORM_CDN_URL = "https://cdn.snipform.io/api/v2/sf.iife.js";
  * ```ts
  * // astro.config.mjs
  * import { defineConfig } from 'astro/config';
- * import snipform from 'astro-snipform';
+ * import snipform from '@snipform/astro-forms';
  *
  * export default defineConfig({
  *   integrations: [snipform()],
@@ -25,7 +25,7 @@ export default function snipform(options?: SnipFormIntegrationOptions): AstroInt
   const inject = options?.scriptInjection !== false;
 
   return {
-    name: "astro-snipform",
+    name: "astro-forms",
     hooks: {
       "astro:config:setup": ({ injectScript }) => {
         if (inject) {
