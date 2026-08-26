@@ -40,3 +40,6 @@ vite.config.*.timestamp-*
 
 # Cache
 .cache/
+
+# Packed tarballs
+*.tgz

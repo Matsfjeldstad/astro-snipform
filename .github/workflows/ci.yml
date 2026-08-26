@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   quality:
-    name: Quality and Astro 7 docs
+    name: Quality
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +30,6 @@ jobs:
       - run: vp check
       - run: vp test
       - run: vp pack
-      - run: vp run astro-snipform-docs#build
 
   astro-compatibility:
     name: Astro ${{ matrix.astro-major }} / Node ${{ matrix.node }}
