@@ -1,6 +1,6 @@
 # @snipform/astro-forms
 
-![astro-forms](https://raw.githubusercontent.com/SnipForm/astro-forms/master/public/astro-forms.jpg)
+![astro-forms](https://raw.githubusercontent.com/SnipForm/astro-forms/main/public/astro-forms.jpg)
 
 Typesafe Astro integration and components for [SnipForm](https://snipform.io) — directive-driven form backend for static sites.
 

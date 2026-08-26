@@ -1,0 +1,56 @@
+name: Release
+
+# `npm version` creates the tag; pushing it releases. The tag is the trigger,
+# so nothing publishes off an ordinary commit to main.
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # This is the entire auth story. npm trades this OIDC token for a
+      # short-lived publish credential, so there is no NPM_TOKEN to leak or
+      # rotate. Granular tokens with "bypass 2FA" lose publishing around
+      # January 2027, so trusted publishing is the path forward.
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # setup-vp instead of setup-node: this repo runs on Vite+ (`vp`), and the
+      # `prepare` script calls `vp config` on install. Node 24 matches the
+      # Astro 7 devDependency (see ci.yml matrix).
+      - uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: "24"
+          cache: true
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm >= 11.5.1 and Node >= 22.14. Held at 11.x
+      # deliberately: npm 12 turns off dependency lifecycle scripts at install
+      # time, which is a separate change to adopt on purpose rather than by
+      # drifting onto @latest.
+      - run: npm install -g npm@^11.5.1
+
+      - run: vp install --frozen-lockfile
+        env:
+          VITE_GIT_HOOKS: "0"
+
+      # The tag names the release, so refuse to publish when package.json
+      # disagrees - otherwise tagging v0.2.0 would quietly ship 0.1.0.
+      - name: Tag matches package.json
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$PKG" ]; then
+            echo "Tag $TAG does not match package.json $PKG"
+            exit 1
+          fi
+
+      # No token, and no --provenance flag: publishing over OIDC attaches a
+      # provenance attestation automatically. check, tests and build run
+      # via the prepublishOnly hook.
+      - run: npm publish
