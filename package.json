@@ -1,6 +1,6 @@
 {
-  "name": "astro-snipform",
-  "version": "0.2.0",
+  "name": "@snipform/astro-forms",
+  "version": "0.3.0",
   "description": "Typesafe Astro integration and components for SnipForm — directive-driven form backend for static sites",
   "keywords": [
     "astro",
@@ -10,13 +10,24 @@
     "static-sites",
     "validation"
   ],
+  "homepage": "https://docs.snipform.io/forms/astro/",
+  "bugs": {
+    "url": "https://github.com/SnipForm/astro-forms/issues"
+  },
   "license": "MIT",
+  "author": "SnipForm",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SnipForm/astro-forms.git"
+  },
   "files": [
     "dist",
     "src/client",
     "src/components",
     "src/types",
-    "src/utils"
+    "src/utils",
+    "README.md",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "typesVersions": {
@@ -33,10 +44,14 @@
     },
     "./components": "./src/components/index.ts"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "vp pack",
     "dev": "vp pack --watch",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "prepublishOnly": "vp check && vp test && vp pack"
   },
   "devDependencies": {
     "astro": "^7.0.6",

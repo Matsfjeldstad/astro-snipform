@@ -1,13 +1,13 @@
-# Astro Snipform
+# @snipform/astro-forms
 
-![astro-snipform](https://raw.githubusercontent.com/Matsfjeldstad/astro-snipform/master/public/astro-snipform.jpg)
+![astro-forms](https://raw.githubusercontent.com/SnipForm/astro-forms/main/public/astro-forms.jpg)
 
 Typesafe Astro integration and components for [SnipForm](https://snipform.io) — directive-driven form backend for static sites.
 
 ## Installation
 
 ```bash
-npm install astro-snipform
+npm install @snipform/astro-forms
 ```
 
 ## Setup
@@ -17,7 +17,7 @@ Add the integration to your Astro config:
 ```ts
 // astro.config.mjs
 import { defineConfig } from "astro/config";
-import snipform from "astro-snipform";
+import snipform from "@snipform/astro-forms";
 
 export default defineConfig({
   integrations: [snipform()],
@@ -40,11 +40,11 @@ snipform({
 
 ## Components
 
-Import components from `astro-snipform/components`:
+Import components from `@snipform/astro-forms/components`:
 
 ```astro
 ---
-import { SnipForm, Field, Input, Textarea, Select, ErrorMessage, ValidMessage, SubmitButton, SuccessContent, SnipFormScript } from 'astro-snipform/components';
+import { SnipForm, Field, Input, Textarea, Select, ErrorMessage, ValidMessage, SubmitButton, SuccessContent, SnipFormScript } from '@snipform/astro-forms/components';
 ---
 ```
 
@@ -253,7 +253,7 @@ To disable it for a form:
 
 ```astro
 ---
-import { SnipForm, Field, SubmitButton, SuccessContent } from 'astro-snipform/components';
+import { SnipForm, Field, SubmitButton, SuccessContent } from '@snipform/astro-forms/components';
 ---
 
 <SnipForm key="contact-form">
