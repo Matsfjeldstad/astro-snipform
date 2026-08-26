@@ -18,7 +18,7 @@ jobs:
       # January 2027, so trusted publishing is the path forward.
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # setup-vp instead of setup-node: this repo runs on Vite+ (`vp`), and the
       # `prepare` script calls `vp config` on install. Node 24 matches the
