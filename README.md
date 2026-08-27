@@ -226,20 +226,22 @@ The `validate` prop accepts multiple formats:
 <Input name="email" validate={{ required: 'Email is required', email: 'Invalid email format' }} />
 
 <!-- Parameterized rules -->
-<Input name="age" validate={{ required: 'Required', 'between[18,99]': 'Must be 18-99' }} />
+<Input name="age" validate={{ required: 'Required', 'min[18]': 'Must be 18+', 'max[99]': 'Must be 99 or under' }} />
 ```
 
 ### Available Rules
 
 **Simple rules:** `required`, `email`, `url`, `active_url`, `boolean`, `accepted`, `numeric`, `integer`, `alpha`, `alpha_num`, `alpha_dash`, `date`, `ip`, `ipv4`, `ipv6`, `uuid`
 
-**Parameterized rules:** `max[n]`, `min[n]`, `between[n,m]`, `min_length[n]`, `max_length[n]`, `starts_with[str]`, `ends_with[str]`, `doesnt_start_with[str]`, `doesnt_end_with[str]`, `in[a,b,c]`, `not_in[a,b,c]`, `after[date]`, `before[date]`, `after_or_equal[date]`, `before_or_equal[date]`, `date_equals[date]`, `same[field]`, `different[field]`, `gt[field]`, `gte[field]`, `lt[field]`, `lte[field]`
+**Parameterized rules:** `max[n]`, `min[n]`, `min_length[n]`, `max_length[n]`, `starts_with[str]`, `doesnt_start_with[str]`, `doesnt_end_with[str]`, `in[a,b,c]`, `not_in[a,b,c]`, `after[date]`, `before[date]`, `date_equals[date]`, `same[field]`, `gt[field]`, `gte[field]`, `lt[field]`, `lte[field]`, `regex[pattern]`, `not_regex[pattern]`
+
+This is exactly the set the server accepts. Any other rule name fails the form at init with `Unknown validation rule`.
 
 ### Client-Side Validation
 
 Validation rules are also checked in the browser — on blur and before submit — so users get instant feedback without a network round trip. There is nothing to configure and no second schema to maintain: the same `sf-validate:*` directives the server reads are interpreted client-side, and errors are shown through the same `if-error` / `error-class` elements, so client and server errors look identical.
 
-The server always re-validates on submit; client-side validation is a UX layer, not a security boundary. Rules that can't run in the browser (like `active_url`, which needs a DNS lookup) are skipped and enforced by the server — in dev mode a console warning lists them.
+The server always re-validates on submit; client-side validation is a UX layer, not a security boundary. Rules that can't run in the browser (`active_url`, which needs a DNS lookup; `regex` and `not_regex`, which use PHP regex semantics) are skipped and enforced by the server — in dev mode a console warning lists them.
 
 To disable it for a form:
 

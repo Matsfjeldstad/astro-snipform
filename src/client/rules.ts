@@ -36,8 +36,14 @@ export function parseRuleAttr(attrName: string, attrValue: string): ParsedRule |
   return { name: match[1], param: match[2] ?? null, message: attrValue || null };
 }
 
-/** Rules that cannot be checked in the browser and are deferred to the server */
-export const SERVER_ONLY_RULES = new Set(["active_url"]);
+/**
+ * Rules that cannot be checked in the browser and are deferred to the server:
+ * `active_url` needs a DNS lookup; `regex` / `not_regex` run with PHP regex
+ * semantics. Every other rule the server accepts is implemented in CHECKS
+ * below - and nothing the server does not accept is, so a rule that passes
+ * here always reaches a server that recognises it.
+ */
+export const SERVER_ONLY_RULES = new Set(["active_url", "regex", "not_regex"]);
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const INTEGER = /^-?\d+$/;
@@ -122,16 +128,10 @@ const CHECKS: Record<string, RuleCheck> = {
 
   max: (v, p) => NUMERIC.test(v.trim()) && Number.parseFloat(v) <= Number.parseFloat(p),
   min: (v, p) => NUMERIC.test(v.trim()) && Number.parseFloat(v) >= Number.parseFloat(p),
-  between: (v, p) => {
-    const [lo, hi] = p.split(",").map((n) => Number.parseFloat(n));
-    const num = Number.parseFloat(v);
-    return NUMERIC.test(v.trim()) && num >= lo && num <= hi;
-  },
 
   min_length: (v, p) => v.length >= Number.parseInt(p, 10),
   max_length: (v, p) => v.length <= Number.parseInt(p, 10),
   starts_with: (v, p) => inList(p).some((s) => v.startsWith(s)),
-  ends_with: (v, p) => inList(p).some((s) => v.endsWith(s)),
   doesnt_start_with: (v, p) => !inList(p).some((s) => v.startsWith(s)),
   doesnt_end_with: (v, p) => !inList(p).some((s) => v.endsWith(s)),
   in: (v, p) => inList(p).includes(v),
@@ -139,12 +139,9 @@ const CHECKS: Record<string, RuleCheck> = {
 
   after: (v, p, values) => compareDates(v, p, values, (a, b) => a > b),
   before: (v, p, values) => compareDates(v, p, values, (a, b) => a < b),
-  after_or_equal: (v, p, values) => compareDates(v, p, values, (a, b) => a >= b),
-  before_or_equal: (v, p, values) => compareDates(v, p, values, (a, b) => a <= b),
   date_equals: (v, p, values) => compareDates(v, p, values, (a, b) => a === b),
 
   same: (v, p, values) => v === asString(values[p]),
-  different: (v, p, values) => v !== asString(values[p]),
   gt: (v, p, values) => compareFields(v, values[p], (a, b) => a > b),
   gte: (v, p, values) => compareFields(v, values[p], (a, b) => a >= b),
   lt: (v, p, values) => compareFields(v, values[p], (a, b) => a < b),
@@ -199,22 +196,17 @@ const MESSAGES: Record<string, (field: string, param: string) => string> = {
   date: (f) => `The ${f} field must be a valid date.`,
   max: (f, p) => `The ${f} field must not be greater than ${p}.`,
   min: (f, p) => `The ${f} field must be at least ${p}.`,
-  between: (f, p) => `The ${f} field must be between ${p.replace(",", " and ")}.`,
   min_length: (f, p) => `The ${f} field must be at least ${p} characters.`,
   max_length: (f, p) => `The ${f} field must not be greater than ${p} characters.`,
   starts_with: (f, p) => `The ${f} field must start with one of: ${p}.`,
-  ends_with: (f, p) => `The ${f} field must end with one of: ${p}.`,
   doesnt_start_with: (f, p) => `The ${f} field must not start with one of: ${p}.`,
   doesnt_end_with: (f, p) => `The ${f} field must not end with one of: ${p}.`,
   in: (f) => `The selected ${f} is invalid.`,
   not_in: (f) => `The selected ${f} is invalid.`,
   after: (f, p) => `The ${f} field must be a date after ${p}.`,
   before: (f, p) => `The ${f} field must be a date before ${p}.`,
-  after_or_equal: (f, p) => `The ${f} field must be a date after or equal to ${p}.`,
-  before_or_equal: (f, p) => `The ${f} field must be a date before or equal to ${p}.`,
   date_equals: (f, p) => `The ${f} field must be a date equal to ${p}.`,
   same: (f, p) => `The ${f} field must match ${label(p)}.`,
-  different: (f, p) => `The ${f} field must be different from ${label(p)}.`,
   gt: (f, p) => `The ${f} field must be greater than ${label(p)}.`,
   gte: (f, p) => `The ${f} field must be greater than or equal to ${label(p)}.`,
   lt: (f, p) => `The ${f} field must be less than ${label(p)}.`,
