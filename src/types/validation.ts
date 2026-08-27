@@ -28,26 +28,23 @@ export type SimpleValidationRule =
 export type ParameterizedValidationRule =
   | `max[${number}]`
   | `min[${number}]`
-  | `between[${number},${number}]`
   | `min_length[${number}]`
   | `max_length[${number}]`
   | `starts_with[${string}]`
-  | `ends_with[${string}]`
   | `doesnt_start_with[${string}]`
   | `doesnt_end_with[${string}]`
   | `in[${string}]`
   | `not_in[${string}]`
   | `after[${string}]`
   | `before[${string}]`
-  | `after_or_equal[${string}]`
-  | `before_or_equal[${string}]`
   | `date_equals[${string}]`
   | `same[${string}]`
-  | `different[${string}]`
   | `gt[${string}]`
   | `gte[${string}]`
   | `lt[${string}]`
-  | `lte[${string}]`;
+  | `lte[${string}]`
+  | `regex[${string}]`
+  | `not_regex[${string}]`;
 
 /** All supported SnipForm validation rules */
 export type ValidationRule = SimpleValidationRule | ParameterizedValidationRule;

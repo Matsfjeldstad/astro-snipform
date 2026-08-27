@@ -46,12 +46,20 @@ describe("isClientRule", () => {
   it("accepts client-checkable rules", () => {
     expect(isClientRule("required")).toBe(true);
     expect(isClientRule("email")).toBe(true);
-    expect(isClientRule("between")).toBe(true);
+    expect(isClientRule("min_length")).toBe(true);
   });
 
   it("rejects server-only and unknown rules", () => {
     expect(isClientRule("active_url")).toBe(false);
+    expect(isClientRule("regex")).toBe(false);
+    expect(isClientRule("not_regex")).toBe(false);
     expect(isClientRule("not_a_rule")).toBe(false);
+  });
+
+  it("does not implement rules the server whitelist rejects", () => {
+    for (const name of ["between", "ends_with", "after_or_equal", "before_or_equal", "different"]) {
+      expect(isClientRule(name)).toBe(false);
+    }
   });
 });
 
@@ -129,13 +137,11 @@ describe("format rules", () => {
 });
 
 describe("number rules", () => {
-  it("min, max, between compare numerically", () => {
+  it("min and max compare numerically", () => {
     expect(check("5", rules("min[3]"))).toBeNull();
     expect(check("2", rules("min[3]"))).not.toBeNull();
     expect(check("5", rules("max[10]"))).toBeNull();
     expect(check("11", rules("max[10]"))).not.toBeNull();
-    expect(check("5", rules("between[1,10]"))).toBeNull();
-    expect(check("11", rules("between[1,10]"))).not.toBeNull();
   });
 
   it("non-numeric values fail number rules", () => {
@@ -151,10 +157,9 @@ describe("string rules", () => {
     expect(check("abcd", rules("max_length[3]"))).not.toBeNull();
   });
 
-  it("starts_with / ends_with accept comma lists", () => {
+  it("starts_with and the doesnt_ rules accept comma lists", () => {
     expect(check("foobar", rules("starts_with[foo,baz]"))).toBeNull();
     expect(check("quux", rules("starts_with[foo,baz]"))).not.toBeNull();
-    expect(check("foobar", rules("ends_with[bar]"))).toBeNull();
     expect(check("foobar", rules("doesnt_start_with[foo]"))).not.toBeNull();
     expect(check("foobar", rules("doesnt_end_with[baz]"))).toBeNull();
   });
@@ -192,21 +197,17 @@ describe("date rules", () => {
     expect(check("2019-06-01", rules("after[start]"), values)).not.toBeNull();
   });
 
-  it("or_equal and date_equals", () => {
-    expect(check("2020-01-01", rules("after_or_equal[2020-01-01]"))).toBeNull();
-    expect(check("2020-01-01", rules("before_or_equal[2020-01-01]"))).toBeNull();
+  it("date_equals", () => {
     expect(check("2020-01-01", rules("date_equals[2020-01-01]"))).toBeNull();
     expect(check("2020-01-02", rules("date_equals[2020-01-01]"))).not.toBeNull();
   });
 });
 
 describe("comparative rules", () => {
-  it("same / different", () => {
+  it("same", () => {
     const values = { password: "secret" };
     expect(check("secret", rules("same[password]"), values)).toBeNull();
     expect(check("other", rules("same[password]"), values)).not.toBeNull();
-    expect(check("other", rules("different[password]"), values)).toBeNull();
-    expect(check("secret", rules("different[password]"), values)).not.toBeNull();
   });
 
   it("gt/gte/lt/lte compare numerically when both numeric", () => {
